@@ -14,7 +14,7 @@
     } else {
 
         callback(undefined , {
-             longtitude : response.body.features[0].center[0],
+             longitude : response.body.features[0].center[0],
              latitude : response.body.features[0].center[1]
         } )
        

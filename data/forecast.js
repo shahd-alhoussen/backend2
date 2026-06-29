@@ -1,6 +1,6 @@
 const request = require("request")
-const forecast=(longtitude,latitude,callback)=>{
-const url = "https://api.open-meteo.com/v1/forecast?latitude=" + latitude + "&longitude=" + longtitude + "&current=temperature_2m"
+const forecast=(longitude,latitude,callback)=>{
+const url = "https://api.open-meteo.com/v1/forecast?latitude=" + latitude + "&longitude=" + longitude + "&current=temperature_2m"
  request ({url , json : true  } , (error , response) => {
 
     if (error) {
@@ -9,7 +9,7 @@ const url = "https://api.open-meteo.com/v1/forecast?latitude=" + latitude + "&lo
          callback (response.body.error.message , undefined )
     }else {
 const temp = response.body.current.temperature_2m
-            callback(undefined, "The current temperature is " + temp + "°C")
+            callback(undefined,  temp )
     }
 })
 }

@@ -1,34 +1,46 @@
+
 const request = require("request")
 const express = require("express")
-const forecast = require("./data/forecast")
-const geocode = require("./data/geocode")
+const geocode = require('./data/geocode')
+const forecast= require('./data/forecast')
 const app = express()
+var hbs =require('hbs')
+const path = require('path');
 const port = 3000
-
-const country = process.argv[2]
-
-app.get("/", (req, res) => {
-    if (!country) {
-        return res.send({ error: "Please provide a country name!" })
-    }
-    geocode(country, (error, data) => {
-        if (!data) {
-            return res.send({ error: error })
-        }
-        forecast(data.longtitude, data.latitude, (forecastError, forecastData) => {
-            if (!forecastData) {
-                return res.send({ error: forecastError })
-            }
-            
-            res.send({
-                country: country,
-                longitude: data.longtitude,
-                latitude: data.latitude,
-                weather: forecastData 
-            })
-        })
+app.set('view engine', 'hbs');
+app.set('views', path.join(__dirname, 'views'));
+app.use(express.static(path.join(__dirname, 'public')));
+app.get('/', (req, res) => {
+    res.render('index'); 
+});
+app.get('/weather',(req,res)=>
+{
+if(!req.query.address){
+    return res.send({
+        error:"ERORR NOT FOUND"
     })
+}
+geocode(req.query.address,(error,data)=>{
+    if (error) {
+          return res.send(error)
+    }
+
+forecast(data.latitude,data.longitude,(error,forecastData)=>{
+if (error) {
+    return res.send({error})
+}
+ res.send({
+  forecast: forecastData,
+    location: req.query.address,
+    latitude: data.latitude,    
+    longitude: data.longitude
+ })
 })
+})
+
+})
+
+
 
 app.listen(port, () => {
     console.log("Server is running! Open: http://localhost:" + port)
